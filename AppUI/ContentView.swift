@@ -9,6 +9,11 @@ import SwiftUI
 import AVKit
 import AVFoundation
 
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
 
 struct PlayerView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PlayerView>) {
@@ -23,7 +28,7 @@ struct PlayerView: UIViewRepresentable {
 class LoopingPlayerUIView: UIView {
     private let playerLayer = AVPlayerLayer()
     private var playerLooper: AVPlayerLooper?
-
+    private var audio: AVAudioPlayer?
 
 
 
@@ -35,9 +40,10 @@ class LoopingPlayerUIView: UIView {
         super.init(frame: frame)
 
         // Load the resource
-        let fileUrl = Bundle.main.url(forResource: "splashanim", withExtension: "mov")!
+        let fileUrl = Bundle.main.url(forResource: "menu", withExtension: "mov")!
         let asset = AVAsset(url: fileUrl)
         let item = AVPlayerItem(asset: asset)
+        
 
         // Setup the player
         let player = AVQueuePlayer()
@@ -50,6 +56,8 @@ class LoopingPlayerUIView: UIView {
 
         // Start the movie
         player.play()
+        self.audio = try! AVAudioPlayer(contentsOf: fileUrl)
+        
     }
 
     override func layoutSubviews() {
@@ -59,30 +67,56 @@ class LoopingPlayerUIView: UIView {
 }
 
 
+struct SplashView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        return splashScreenUIView(frame: .zero)
+    }
+    
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<SplashView>) {
+    }
+
+}
+
+class splashScreenUIView: UIView {
+    private let splashLayer = AVPlayerLayer()
+    private var audio: AVAudioPlayer?
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        // Load the resource
+        let fileUrl = Bundle.main.url(forResource: "splashanim", withExtension: "mov")!
+        let asset = AVAsset(url: fileUrl)
+        let item = AVPlayerItem(asset: asset)
+        
+        
+        // Setup the player
+        let player = AVQueuePlayer()
+        splashLayer.player = player
+        splashLayer.videoGravity = .resizeAspectFill
+        layer.addSublayer(splashLayer)
+        
+        player.play()
+        self.audio = try! AVAudioPlayer(contentsOf: fileUrl)
+    }
+}
+
 struct ContentView: View {
     var body: some View {
 
-        GeometryReader{ geo in
             ZStack {
                 PlayerView()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geo.size.width, height: geo.size.height+100)
                 .edgesIgnoringSafeArea(.all)
 
-                VStack{
-                    Text("Hello World")
-                        .font(.title)
-                        .foregroundColor(.white)
-                    Spacer()
-                }
-            }
         }
-
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}
