@@ -65,9 +65,40 @@ class LoopingPlayerUIView: UIView {
 
 struct MainMenu: View {
     var body: some View {
-        ZStack {
-            PlayerView()
-                .edgesIgnoringSafeArea(.all)
+        NavigationStack {
+            ZStack {
+                PlayerView()
+                    .edgesIgnoringSafeArea(.all)
+                NavigationLink(destination: CreditsView()) {
+                    Image(systemName:"info")
+                        .foregroundColor(Color.black)
+                        .padding(.vertical, 20)
+                        .padding(.horizontal, 23)
+                        .background(Color.white)
+                        .cornerRadius(100)
+                        .shadow(radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+                        .position(x: 780, y: 355)
+                        .imageScale(/*@START_MENU_TOKEN@*/.large/*@END_MENU_TOKEN@*/)
+                        .opacity(0.6)
+                        .onTapGesture {
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        }
+                }
+                NavigationLink(destination: CreditsView()) {
+                    Image(systemName:"bell.fill")
+                        .foregroundColor(Color.black)
+                        .fontWeight(.bold)
+                        .padding(.vertical, 17)
+                        .padding(.horizontal, 17)
+                        .background(Color.white)
+                        .cornerRadius(100)
+                        .shadow(radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+                        .position(x: 730, y: 355)
+                        .imageScale(/*@START_MENU_TOKEN@*/.large/*@END_MENU_TOKEN@*/)
+                        .opacity(0.6)
+                }
+
+            }
         }
     }
 }
