@@ -17,20 +17,18 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-
-struct PlayerView: UIViewRepresentable {
-    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PlayerView>) {
+struct SplashView: UIViewRepresentable {
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<SplashView>) {
     }
 
     func makeUIView(context: Context) -> UIView {
-        return LoopingPlayerUIView(frame: .zero)
+        return SplashUIView(frame: .zero)
     }
 }
 
 
-class LoopingPlayerUIView: UIView {
+class SplashUIView: UIView {
     private let playerLayer = AVPlayerLayer()
-    private var playerLooper: AVPlayerLooper?
     private var audio: AVAudioPlayer?
 
 
@@ -43,24 +41,19 @@ class LoopingPlayerUIView: UIView {
         super.init(frame: frame)
 
         // Load the resource
-        let fileUrl = Bundle.main.url(forResource: "menu", withExtension: "mov")!
-        let asset = AVAsset(url: fileUrl)
-        let item = AVPlayerItem(asset: asset)
-        
+        let fileUrl = Bundle.main.url(forResource: "splashanim", withExtension: "mov")!
+
 
         // Setup the player
-        let player = AVQueuePlayer()
+        let player = AVPlayer(url: fileUrl)
         playerLayer.player = player
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
 
-        // Create a new player looper with the queue player and template item
-        playerLooper = AVPlayerLooper(player: player, templateItem: item)
-
         // Start the movie
         player.play()
         self.audio = try! AVAudioPlayer(contentsOf: fileUrl)
-        
+
     }
 
     override func layoutSubviews() {
@@ -69,11 +62,27 @@ class LoopingPlayerUIView: UIView {
     }
 }
 
+
 struct ContentView: View {
+    @State var isActive : Bool = false
+
     var body: some View {
+
+        if isActive {
+            MainMenu()
+        } else {
             ZStack {
-                PlayerView()
-                .edgesIgnoringSafeArea(.all)
+                SplashView()
+                    .edgesIgnoringSafeArea(.all)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {                            withAnimation {
+                            self.isActive = true
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
+
