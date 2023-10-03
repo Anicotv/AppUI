@@ -1,25 +1,20 @@
 //
-//  ContentView.swift
+//  SwiftUIView.swift
 //  AppUI
 //
-//  Created by Anissa on 10/2/23.
+//  Created by Anissa on 10/3/23.
 //
 
 import SwiftUI
 import AVKit
+import UIKit
 import AVFoundation
 import Combine
-import UIKit
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
 
 
-struct PlayerView: UIViewRepresentable {
-    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PlayerView>) {
+
+struct SplashView: UIViewRepresentable {
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<SplashView>) {
     }
 
     func makeUIView(context: Context) -> UIView {
@@ -28,9 +23,8 @@ struct PlayerView: UIViewRepresentable {
 }
 
 
-class LoopingPlayerUIView: UIView {
+class SplashUIView: UIView {
     private let playerLayer = AVPlayerLayer()
-    private var playerLooper: AVPlayerLooper?
     private var audio: AVAudioPlayer?
 
 
@@ -43,19 +37,13 @@ class LoopingPlayerUIView: UIView {
         super.init(frame: frame)
 
         // Load the resource
-        let fileUrl = Bundle.main.url(forResource: "menu", withExtension: "mov")!
-        let asset = AVAsset(url: fileUrl)
-        let item = AVPlayerItem(asset: asset)
+        let fileUrl = Bundle.main.url(forResource: "splashanim", withExtension: "mov")!
         
-
         // Setup the player
         let player = AVQueuePlayer()
         playerLayer.player = player
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
-
-        // Create a new player looper with the queue player and template item
-        playerLooper = AVPlayerLooper(player: player, templateItem: item)
 
         // Start the movie
         player.play()
@@ -69,11 +57,31 @@ class LoopingPlayerUIView: UIView {
     }
 }
 
-struct ContentView: View {
+struct SwiftUIView: View {
+    @State var isActive : Bool = false
+    
     var body: some View {
-            ZStack {
+        ZStack {
+            if isActive {
+                ContentView()
+            } else
+            {
                 PlayerView()
-                .edgesIgnoringSafeArea(.all)
+                    .edgesIgnoringSafeArea(.all)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            withAnimation {
+                                self.isActive = true
+                            }
+                        }
+                    }
+            }
         }
+    }
+}
+
+struct SwiftUIView_Previews: PreviewProvider {
+    static var previews: some View {
+        SwiftUIView()
     }
 }
